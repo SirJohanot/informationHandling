@@ -7,32 +7,23 @@ public class Composite implements Component {
 
     private final List<Component> components = new ArrayList<>();
 
-    @Override
+    public Composite() {
+    }
+
+    public Composite(List<? extends Component> components) {
+        this.components.addAll(components);
+    }
+
     public void add(Component component) {
         components.add(component);
     }
 
     public List<Component> getChildren() {
-        return components;
-    }
-
-    public void setChildren(List<? extends Component> components) {
-        components.clear();
-        this.components.addAll(components);
+        return new ArrayList<>(components);
     }
 
     public int getChildrenNumber() {
         return components.size();
-    }
-
-    @Override
-    public Component get(int index) {
-        return components.get(index);
-    }
-
-    @Override
-    public void remove(Component component) {
-        components.remove(component);
     }
 
     @Override

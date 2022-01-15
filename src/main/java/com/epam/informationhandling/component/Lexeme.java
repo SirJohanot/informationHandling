@@ -2,8 +2,8 @@ package com.epam.informationhandling.component;
 
 public class Lexeme implements Component {
 
-    private String value;
-    private LexemeType lexemeType;
+    private final String value;
+    private final LexemeType lexemeType;
 
     public Lexeme(String value, LexemeType lexemeType) {
         this.value = value;
@@ -18,33 +18,12 @@ public class Lexeme implements Component {
         return new Lexeme(value, LexemeType.EXPRESSION);
     }
 
-    @Override
-    public void add(Component component) {
-    }
-
-    @Override
-    public Component get(int number) {
-        return null;
-    }
-
-    @Override
-    public void remove(Component component) {
-    }
-
     public String getValue() {
         return value;
     }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
-
     public LexemeType getLexemeType() {
         return lexemeType;
-    }
-
-    public void setLexemeType(LexemeType lexemeType) {
-        this.lexemeType = lexemeType;
     }
 
     @Override
