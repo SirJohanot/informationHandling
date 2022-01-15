@@ -6,17 +6,19 @@ import java.util.Comparator;
 
 public class TargetCharacterNumberComparator implements Comparator<Lexeme> {
 
-    private char targetCharacter;
+    private final char targetCharacter;
 
     public TargetCharacterNumberComparator(char targetCharacter) {
         this.targetCharacter = targetCharacter;
     }
 
     @Override
-    public int compare(Lexeme o1, Lexeme o2) {
-        int targetCharacterNumberDifference = targetCharacterCount(o1.getValue()) - targetCharacterCount(o2.getValue());
-        if (targetCharacterNumberDifference != 0) return targetCharacterNumberDifference;
-        return o1.getValue().compareToIgnoreCase(o2.getValue());
+    public int compare(Lexeme firstLexeme, Lexeme secondLexeme) {
+        int targetCharacterNumberDifference = targetCharacterCount(firstLexeme.getValue()) - targetCharacterCount(secondLexeme.getValue());
+        if (targetCharacterNumberDifference != 0) {
+            return targetCharacterNumberDifference;
+        }
+        return firstLexeme.getValue().compareToIgnoreCase(secondLexeme.getValue());
     }
 
     private int targetCharacterCount(String lexeme) {
