@@ -6,12 +6,14 @@ import java.util.Scanner;
 
 public class ExpressionCalculator {
 
+    private static final String LEXEME_DELIMITER = " ";
+
     private final List<MathExpression> mathExpressionList = new ArrayList<>();
 
     public Integer calculate(String expression) {
         mathExpressionList.clear();
-        for (String lexeme : expression.split(" ")) {
-            if (lexeme.isEmpty()) {
+        for (String lexeme : expression.split(LEXEME_DELIMITER)) {
+            if (lexeme.isEmpty() || lexeme.length() > 1 && addIntegerToExpression(lexeme)) {
                 continue;
             }
             switch (lexeme.charAt(0)) {
@@ -28,13 +30,20 @@ public class ExpressionCalculator {
                     mathExpressionList.add(new TerminalDivideExpression());
                     break;
                 default:
-                    Scanner scanner = new Scanner(lexeme);
-                    if (scanner.hasNextInt()) {
-                        mathExpressionList.add(new NonTerminalExpression(scanner.nextInt()));
-                    }
+                    addIntegerToExpression(lexeme);
             }
         }
         return finaliseCalculation();
+    }
+
+    private boolean addIntegerToExpression(String lexeme) {
+        Scanner scanner = new Scanner(lexeme);
+        if (scanner.hasNextInt()) {
+            mathExpressionList.add(new NonTerminalExpression(scanner.nextInt()));
+        } else {
+            return false;
+        }
+        return true;
     }
 
     private Integer finaliseCalculation() {
