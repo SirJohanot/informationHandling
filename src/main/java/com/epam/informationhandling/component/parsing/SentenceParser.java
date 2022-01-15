@@ -5,10 +5,10 @@ import com.epam.informationhandling.component.Lexeme;
 
 public class SentenceParser extends AbstractParser {
 
-    private static final String LEXEMES_DELIMITER = "[(\\w(?=\\[))((?<=\\])\\w)\\w]";
+    private static final String LEXEMES_DELIMITER = "[( (?=\\[))((?<=\\]) ) ]";
 
-    public SentenceParser(Parser successor) {
-        super(successor);
+    public SentenceParser() {
+        super();
     }
 
     @Override
@@ -17,8 +17,11 @@ public class SentenceParser extends AbstractParser {
         String[] lexemes = text.split(LEXEMES_DELIMITER);
         for (String lexeme : lexemes) {
             Lexeme convertedLexeme;
-            if (lexeme.contains("[")) convertedLexeme = Lexeme.expression(lexeme);
-            else convertedLexeme = Lexeme.expression(lexeme);
+            if (lexeme.contains("[")) {
+                convertedLexeme = Lexeme.expression(lexeme);
+            } else {
+                convertedLexeme = Lexeme.word(lexeme);
+            }
             composite.add(convertedLexeme);
         }
         return composite;
