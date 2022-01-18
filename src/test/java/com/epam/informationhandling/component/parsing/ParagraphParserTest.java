@@ -11,11 +11,11 @@ import java.util.Collections;
 
 public class ParagraphParserTest {
 
-    private static final String PARAGRAPH_TO_PARSE = "It was a sunny... Day! Never before seen. Saint Petersburg?";
     private static final String FIRST_SENTENCE = "It was a sunny...";
     private static final String SECOND_SENTENCE = "Day!";
     private static final String THIRD_SENTENCE = "Never before seen.";
     private static final String FOURTH_SENTENCE = "Saint Petersburg?";
+    private static final String PARAGRAPH_TO_PARSE = FIRST_SENTENCE + " " + SECOND_SENTENCE + " " + THIRD_SENTENCE + " " + FOURTH_SENTENCE;
     private static final Composite FIRST_SENTENCE_COMPOSITE = new Composite(Arrays.asList(Lexeme.word("It"),
             Lexeme.word("was"),
             Lexeme.word("a"),

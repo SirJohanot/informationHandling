@@ -11,10 +11,10 @@ import java.util.Collections;
 
 public class TextParserTest {
 
-    private static final String TEXT_TO_PARSE = "It was a sunny. Day!\nNever before seen.\nSaint Petersburg?";
     private static final String FIRST_PARAGRAPH = "It was a sunny. Day!";
     private static final String SECOND_PARAGRAPH = "Never before seen.";
     private static final String THIRD_PARAGRAPH = "Saint Petersburg?";
+    private static final String TEXT_TO_PARSE = FIRST_PARAGRAPH + "\n" + SECOND_PARAGRAPH + "\n" + THIRD_PARAGRAPH;
     private static final Composite FIRST_SENTENCE_COMPOSITE = new Composite(Arrays.asList(Lexeme.word("It"),
             Lexeme.word("was"),
             Lexeme.word("a"),
