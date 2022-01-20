@@ -2,9 +2,9 @@ package com.epam.informationhandling.logic.expressioncalculation;
 
 public class NonTerminalExpression implements MathExpression {
 
-    private final int number;
+    private final double number;
 
-    public NonTerminalExpression(int number) {
+    public NonTerminalExpression(double number) {
         this.number = number;
     }
 

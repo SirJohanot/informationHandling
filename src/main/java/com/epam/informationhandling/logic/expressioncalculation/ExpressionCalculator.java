@@ -1,27 +1,42 @@
 package com.epam.informationhandling.logic.expressioncalculation;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class ExpressionCalculator {
 
     private static final String LEXEME_DELIMITER = " ";
 
+    private static final Logger LOGGER = LogManager.getLogger(ExpressionCalculator.class);
+
     private final List<MathExpression> mathExpressionList = new ArrayList<>();
 
-    public Integer calculate(String expression) {
+    public Double calculate(String expression, Map<Character, Double> variables) {
+        LOGGER.info("Started calculating " + expression + " with variables " + variables.toString());
         mathExpressionList.clear();
         for (String lexeme : expression.split(LEXEME_DELIMITER)) {
-            if (lexeme.isEmpty() || lexeme.length() > 1 && addIntegerToExpression(lexeme)) {
+            if (lexeme.isEmpty()) {
                 continue;
             }
             switch (lexeme.charAt(0)) {
                 case '+':
-                    mathExpressionList.add(new TerminalPlusExpression());
+                    if (lexeme.length() == 1) {
+                        mathExpressionList.add(new TerminalPlusExpression());
+                    } else {
+                        addValueToExpression(lexeme, variables);
+                    }
                     break;
                 case '-':
-                    mathExpressionList.add(new TerminalMinusExpression());
+                    if (lexeme.length() == 1) {
+                        mathExpressionList.add(new TerminalMinusExpression());
+                    } else {
+                        addValueToExpression(lexeme, variables);
+                    }
                     break;
                 case '*':
                     mathExpressionList.add(new TerminalMultiplyExpression());
@@ -30,23 +45,27 @@ public class ExpressionCalculator {
                     mathExpressionList.add(new TerminalDivideExpression());
                     break;
                 default:
-                    addIntegerToExpression(lexeme);
+                    addValueToExpression(lexeme, variables);
             }
         }
-        return finaliseCalculation();
+        Double finalValue = finaliseCalculation();
+        LOGGER.info("Calculated " + expression + " with variables " + variables + "\nAnswer: " + finalValue);
+        return finalValue;
     }
 
-    private boolean addIntegerToExpression(String lexeme) {
+    private void addValueToExpression(String lexeme, Map<Character, Double> variables) {
         Scanner scanner = new Scanner(lexeme);
-        if (scanner.hasNextInt()) {
-            mathExpressionList.add(new NonTerminalExpression(scanner.nextInt()));
+        if (scanner.hasNextDouble()) {
+            mathExpressionList.add(new NonTerminalExpression(scanner.nextDouble()));
         } else {
-            return false;
+            Double value = variables.get(lexeme.charAt(0));
+            if (value != null) {
+                mathExpressionList.add(new NonTerminalExpression(value));
+            }
         }
-        return true;
     }
 
-    private Integer finaliseCalculation() {
+    private Double finaliseCalculation() {
         Context context = new Context();
         for (MathExpression expression : mathExpressionList) {
             expression.interpret(context);

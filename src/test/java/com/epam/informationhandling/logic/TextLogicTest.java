@@ -10,15 +10,24 @@ import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TextLogicTest {
 
-    private static final String FIRST_EXPRESSION = "[ 2 1 + 3 / 2 + ]";
-    private static final Integer ANSWER_TO_FIRST_EXPRESSION = 3;
-    private static final String ANSWER_TO_FIRST_EXPRESSION_STRING = Integer.toString(ANSWER_TO_FIRST_EXPRESSION);
-    private static final String SECOND_EXPRESSION = "[ 2 2 + 2 * ]";
-    private static final Integer ANSWER_TO_SECOND_EXPRESSION = 8;
-    private static final String ANSWER_TO_SECOND_EXPRESSION_STRING = Integer.toString(ANSWER_TO_SECOND_EXPRESSION);
+    private static final String FIRST_EXPRESSION = "[ 2 1 + x / 2 + ]";
+    private static final Double ANSWER_TO_FIRST_EXPRESSION = 3.0;
+    private static final String ANSWER_TO_FIRST_EXPRESSION_STRING = Double.toString(ANSWER_TO_FIRST_EXPRESSION);
+    private static final String SECOND_EXPRESSION = "[ 2 2 + y * ]";
+    private static final Double ANSWER_TO_SECOND_EXPRESSION = 8.0;
+    private static final String ANSWER_TO_SECOND_EXPRESSION_STRING = Double.toString(ANSWER_TO_SECOND_EXPRESSION);
+    private static final Map<Character, Double> EXPRESSION_VARIABLES_VALUES = new HashMap<>();
+
+    static {
+        EXPRESSION_VARIABLES_VALUES.put('x', 3.0);
+        EXPRESSION_VARIABLES_VALUES.put('y', 2.0);
+    }
+
     private static final Composite FIRST_SENTENCE_COMPOSITE = new Composite(Arrays.asList(Lexeme.word("It"),
             Lexeme.word("was"),
             Lexeme.word("a"),
@@ -35,7 +44,7 @@ public class TextLogicTest {
     private static final Composite SECOND_PARAGRAPH_WITH_EXPRESSIONS_COMPOSITE = new Composite(Arrays.asList(SECOND_SENTENCE_WITH_EXPRESSION_COMPOSITE, THIRD_SENTENCE_COMPOSITE));
     private static final Composite THIRD_PARAGRAPH_WITH_EXPRESSIONS_COMPOSITE = new Composite(Collections.singletonList(FOURTH_SENTENCE_WITH_EXPRESSION_COMPOSITE));
     private static final Composite TEXT_COMPOSITE = new Composite(Arrays.asList(FIRST_PARAGRAPH_COMPOSITE, SECOND_PARAGRAPH_WITH_EXPRESSIONS_COMPOSITE, THIRD_PARAGRAPH_WITH_EXPRESSIONS_COMPOSITE));
-    private static final String EXPECTED_TEXT_OF_COMPOSITE = "It was a sunny.\n[ 2 1 + 3 / 2 + ] Day! Never before seen.\nSaint [ 2 2 + 2 * ] Petersburg?";
+    private static final String EXPECTED_TEXT_OF_COMPOSITE = "It was a sunny.\n[ 2 1 + x / 2 + ] Day! Never before seen.\nSaint [ 2 2 + y * ] Petersburg?";
     private static final Composite EXPECTED_TEXT_COMPOSITE_WITH_SORTED_PARAGRAPHS = new Composite(Arrays.asList(FIRST_PARAGRAPH_COMPOSITE, THIRD_PARAGRAPH_WITH_EXPRESSIONS_COMPOSITE, SECOND_PARAGRAPH_WITH_EXPRESSIONS_COMPOSITE));
 
     private static final Composite SECOND_SENTENCE_WITH_CALCULATED_EXPRESSION_COMPOSITE = new Composite(Arrays.asList(Lexeme.word(ANSWER_TO_FIRST_EXPRESSION_STRING),
@@ -71,11 +80,11 @@ public class TextLogicTest {
     public void testCalculateExpressionsInTextShouldCalculateIfThereAreMultipleExpressionsInDifferentParagraphs() throws UnsupportedComponentTypeException {
         //given
         ExpressionCalculator expressionCalculatorMock = Mockito.mock(ExpressionCalculator.class);
-        Mockito.when(expressionCalculatorMock.calculate(FIRST_EXPRESSION)).thenReturn(ANSWER_TO_FIRST_EXPRESSION);
-        Mockito.when(expressionCalculatorMock.calculate(SECOND_EXPRESSION)).thenReturn(ANSWER_TO_SECOND_EXPRESSION);
+        Mockito.when(expressionCalculatorMock.calculate(FIRST_EXPRESSION, EXPRESSION_VARIABLES_VALUES)).thenReturn(ANSWER_TO_FIRST_EXPRESSION);
+        Mockito.when(expressionCalculatorMock.calculate(SECOND_EXPRESSION, EXPRESSION_VARIABLES_VALUES)).thenReturn(ANSWER_TO_SECOND_EXPRESSION);
         TextLogic localTextLogic = new TextLogic(expressionCalculatorMock);
         //when
-        Composite actualCalculatedTextComposite = localTextLogic.calculateExpressionsInText(TEXT_COMPOSITE);
+        Composite actualCalculatedTextComposite = localTextLogic.calculateExpressionsInText(TEXT_COMPOSITE, EXPRESSION_VARIABLES_VALUES);
         //then
         Assert.assertEquals(EXPECTED_CALCULATED_TEXT_COMPOSITE, actualCalculatedTextComposite);
     }

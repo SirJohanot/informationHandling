@@ -9,14 +9,19 @@ import com.epam.informationhandling.component.parsing.TextParserBuilder;
 import com.epam.informationhandling.logic.comparator.ChildComponentsComparator;
 import com.epam.informationhandling.logic.exception.UnsupportedComponentTypeException;
 import com.epam.informationhandling.logic.expressioncalculation.ExpressionCalculator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class TextLogic {
 
     private static final String PARAGRAPHS_DELIMITER = "\n";
     private static final String LEXEMES_AND_SENTENCES_DELIMITER = " ";
+
+    private static final Logger LOGGER = LogManager.getLogger(TextLogic.class);
 
     private final ExpressionCalculator expressionCalculator;
 
@@ -57,16 +62,19 @@ public class TextLogic {
             resultString.append(lexemeText);
             return resultString.toString();
         }
-        throw new UnsupportedComponentTypeException("An unsupported Component was passed to parsedComponentToString method");
+        UnsupportedComponentTypeException unsupportedComponentTypeException =
+                new UnsupportedComponentTypeException("An unsupported Component was passed to method");
+        LOGGER.throwing(unsupportedComponentTypeException);
+        throw unsupportedComponentTypeException;
     }
 
-    public Composite calculateExpressionsInText(Composite text) throws UnsupportedComponentTypeException {
+    public Composite calculateExpressionsInText(Composite text, Map<Character, Double> variables) throws UnsupportedComponentTypeException {
         List<Component> calculatedTextComponents = new ArrayList<>();
         List<Component> textComponents = text.getChildren();
         for (Component component : textComponents) {
             Component calculatedComponent;
             try {
-                calculatedComponent = calculateExpressionsInComponent(component);
+                calculatedComponent = calculateExpressionsInComponent(component, variables);
             } catch (UnsupportedComponentTypeException e) {
                 throw new UnsupportedComponentTypeException(e);
             }
@@ -75,13 +83,13 @@ public class TextLogic {
         return new Composite(calculatedTextComponents);
     }
 
-    private Component calculateExpressionsInComponent(Component component) throws UnsupportedComponentTypeException {
+    private Component calculateExpressionsInComponent(Component component, Map<Character, Double> variables) throws UnsupportedComponentTypeException {
         if (component.getClass() == Composite.class) {
             Composite composite = (Composite) component;
             List<Component> calculatedComponents = new ArrayList<>();
             List<Component> components = composite.getChildren();
             for (Component componentIterator : components) {
-                Component calculatedComponentIterator = calculateExpressionsInComponent(componentIterator);
+                Component calculatedComponentIterator = calculateExpressionsInComponent(componentIterator, variables);
                 calculatedComponents.add(calculatedComponentIterator);
             }
             return new Composite(calculatedComponents);
@@ -91,13 +99,16 @@ public class TextLogic {
             String lexemeValue = lexeme.getValue();
             String calculatedValue;
             if (lexeme.getLexemeType() == LexemeType.EXPRESSION) {
-                calculatedValue = Integer.toString(expressionCalculator.calculate(lexemeValue));
+                calculatedValue = Double.toString(expressionCalculator.calculate(lexemeValue, variables));
             } else {
                 calculatedValue = lexemeValue;
             }
             return Lexeme.word(calculatedValue);
         }
-        throw new UnsupportedComponentTypeException("An unsupported Component was passed to method");
+        UnsupportedComponentTypeException unsupportedComponentTypeException =
+                new UnsupportedComponentTypeException("An unsupported Component was passed to method");
+        LOGGER.throwing(unsupportedComponentTypeException);
+        throw unsupportedComponentTypeException;
     }
 
     public Composite sortParagraphsBySentenceNumber(Composite text) {
