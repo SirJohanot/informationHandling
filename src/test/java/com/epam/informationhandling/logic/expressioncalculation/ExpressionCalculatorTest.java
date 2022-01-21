@@ -1,5 +1,6 @@
 package com.epam.informationhandling.logic.expressioncalculation;
 
+import com.epam.informationhandling.logic.expressioncalculation.exception.ExpressionCalculationException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -34,12 +35,14 @@ public class ExpressionCalculatorTest {
 
     private static final Double ANSWER_TO_EXPRESSION_WITH_VARIABLES = 1.0;
 
+    private static final String EXPRESSION_WITH_UNKNOWN_VARIABLES = "[ a 2 + c / ]";
+
     private static final double ACCEPTABLE_ASSERTION_DELTA = 0.001;
 
     private final ExpressionCalculator expressionCalculator = new ExpressionCalculator();
 
     @Test
-    public void testCalculateShouldReturnCalculateAdditionExpression() {
+    public void testCalculateShouldReturnCalculateAdditionExpression() throws ExpressionCalculationException {
         //given
         //when
         Double actualAnswer = expressionCalculator.calculate(ADDITION_EXPRESSION, EMPTY_EXPRESSION_MAP);
@@ -48,7 +51,7 @@ public class ExpressionCalculatorTest {
     }
 
     @Test
-    public void testCalculateShouldCalculateSubtractionExpression() {
+    public void testCalculateShouldCalculateSubtractionExpression() throws ExpressionCalculationException {
         //given
         //when
         Double actualAnswer = expressionCalculator.calculate(SUBTRACTION_EXPRESSION, EMPTY_EXPRESSION_MAP);
@@ -57,7 +60,7 @@ public class ExpressionCalculatorTest {
     }
 
     @Test
-    public void testCalculateShouldCalculatePositiveMultiplicationExpression() {
+    public void testCalculateShouldCalculatePositiveMultiplicationExpression() throws ExpressionCalculationException {
         //given
         //when
         Double actualAnswer = expressionCalculator.calculate(POSITIVE_MULTIPLICATION_EXPRESSION, EMPTY_EXPRESSION_MAP);
@@ -66,7 +69,7 @@ public class ExpressionCalculatorTest {
     }
 
     @Test
-    public void testCalculateShouldCalculateNegativeMultiplicationExpression() {
+    public void testCalculateShouldCalculateNegativeMultiplicationExpression() throws ExpressionCalculationException {
         //given
         //when
         Double actualAnswer = expressionCalculator.calculate(NEGATIVE_MULTIPLICATION_EXPRESSION, EMPTY_EXPRESSION_MAP);
@@ -75,7 +78,7 @@ public class ExpressionCalculatorTest {
     }
 
     @Test
-    public void testCalculateShouldCalculatePositiveDivisionExpression() {
+    public void testCalculateShouldCalculatePositiveDivisionExpression() throws ExpressionCalculationException {
         //given
         //when
         Double actualAnswer = expressionCalculator.calculate(POSITIVE_DIVISION_EXPRESSION, EMPTY_EXPRESSION_MAP);
@@ -84,7 +87,7 @@ public class ExpressionCalculatorTest {
     }
 
     @Test
-    public void testCalculateShouldCalculateNegativeDivisionExpression() {
+    public void testCalculateShouldCalculateNegativeDivisionExpression() throws ExpressionCalculationException {
         //given
         //when
         Double actualAnswer = expressionCalculator.calculate(NEGATIVE_DIVISION_EXPRESSION, EMPTY_EXPRESSION_MAP);
@@ -93,7 +96,7 @@ public class ExpressionCalculatorTest {
     }
 
     @Test
-    public void testCalculateShouldReturnTheRightAnswerForAnAdvancedExpression() {
+    public void testCalculateShouldReturnTheRightAnswerForAnAdvancedExpression() throws ExpressionCalculationException {
         //given
         //when
         Double actualAnswer = expressionCalculator.calculate(ADVANCED_EXPRESSION, EMPTY_EXPRESSION_MAP);
@@ -102,11 +105,19 @@ public class ExpressionCalculatorTest {
     }
 
     @Test
-    public void testCalculateShouldCalculateExpressionWithVariables() {
+    public void testCalculateShouldCalculateExpressionWithVariables() throws ExpressionCalculationException {
         //given
         //when
         Double actualAnswer = expressionCalculator.calculate(EXPRESSION_WITH_VARIABLES, VARIABLES_MAP);
         //then
         Assert.assertEquals(ANSWER_TO_EXPRESSION_WITH_VARIABLES, actualAnswer, ACCEPTABLE_ASSERTION_DELTA);
+    }
+
+    @Test(expected = ExpressionCalculationException.class)
+    public void testCalculateShouldThrowExpressionCalculationExceptionWhenDoesNotKnowAVariablesValue() throws ExpressionCalculationException {
+        //given
+        //when
+        Double actualAnswer = expressionCalculator.calculate(EXPRESSION_WITH_UNKNOWN_VARIABLES, EMPTY_EXPRESSION_MAP);
+        //then
     }
 }

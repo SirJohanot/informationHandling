@@ -1,5 +1,6 @@
 package com.epam.informationhandling.logic.expressioncalculation;
 
+import com.epam.informationhandling.logic.expressioncalculation.exception.ExpressionCalculationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,9 +17,10 @@ public class ExpressionCalculator {
 
     private final List<MathExpression> mathExpressionList = new ArrayList<>();
 
-    public Double calculate(String expression, Map<Character, Double> variables) {
+    public Double calculate(String expression, Map<Character, Double> variables) throws ExpressionCalculationException {
         LOGGER.info("Started calculating " + expression + " with variables " + variables.toString());
         mathExpressionList.clear();
+        expression = expression.replaceAll("[\\[\\]]", "");
         for (String lexeme : expression.split(LEXEME_DELIMITER)) {
             if (lexeme.isEmpty()) {
                 continue;
@@ -53,7 +55,7 @@ public class ExpressionCalculator {
         return finalValue;
     }
 
-    private void addValueToExpression(String lexeme, Map<Character, Double> variables) {
+    private void addValueToExpression(String lexeme, Map<Character, Double> variables) throws ExpressionCalculationException {
         Scanner scanner = new Scanner(lexeme);
         if (scanner.hasNextDouble()) {
             mathExpressionList.add(new NonTerminalExpression(scanner.nextDouble()));
@@ -61,6 +63,10 @@ public class ExpressionCalculator {
             Double value = variables.get(lexeme.charAt(0));
             if (value != null) {
                 mathExpressionList.add(new NonTerminalExpression(value));
+            } else {
+                ExpressionCalculationException expressionCalculationException = new ExpressionCalculationException("Could not calculate expression: variable of unknown value encountered");
+                LOGGER.throwing(expressionCalculationException);
+                throw expressionCalculationException;
             }
         }
     }

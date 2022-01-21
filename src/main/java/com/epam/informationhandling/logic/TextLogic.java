@@ -9,6 +9,7 @@ import com.epam.informationhandling.component.parsing.TextParserBuilder;
 import com.epam.informationhandling.logic.comparator.ChildComponentsComparator;
 import com.epam.informationhandling.logic.exception.UnsupportedComponentTypeException;
 import com.epam.informationhandling.logic.expressioncalculation.ExpressionCalculator;
+import com.epam.informationhandling.logic.expressioncalculation.exception.ExpressionCalculationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -75,7 +76,7 @@ public class TextLogic {
             Component calculatedComponent;
             try {
                 calculatedComponent = calculateExpressionsInComponent(component, variables);
-            } catch (UnsupportedComponentTypeException e) {
+            } catch (UnsupportedComponentTypeException | ExpressionCalculationException e) {
                 throw new UnsupportedComponentTypeException(e);
             }
             calculatedTextComponents.add(calculatedComponent);
@@ -83,7 +84,7 @@ public class TextLogic {
         return new Composite(calculatedTextComponents);
     }
 
-    private Component calculateExpressionsInComponent(Component component, Map<Character, Double> variables) throws UnsupportedComponentTypeException {
+    private Component calculateExpressionsInComponent(Component component, Map<Character, Double> variables) throws UnsupportedComponentTypeException, ExpressionCalculationException {
         if (component.getClass() == Composite.class) {
             Composite composite = (Composite) component;
             List<Component> calculatedComponents = new ArrayList<>();

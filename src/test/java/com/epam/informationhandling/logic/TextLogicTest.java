@@ -4,6 +4,7 @@ import com.epam.informationhandling.component.Composite;
 import com.epam.informationhandling.component.Lexeme;
 import com.epam.informationhandling.logic.exception.UnsupportedComponentTypeException;
 import com.epam.informationhandling.logic.expressioncalculation.ExpressionCalculator;
+import com.epam.informationhandling.logic.expressioncalculation.exception.ExpressionCalculationException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -77,7 +78,7 @@ public class TextLogicTest {
     }
 
     @Test
-    public void testCalculateExpressionsInTextShouldCalculateIfThereAreMultipleExpressionsInDifferentParagraphs() throws UnsupportedComponentTypeException {
+    public void testCalculateExpressionsInTextShouldCalculateIfThereAreMultipleExpressionsInDifferentParagraphs() throws UnsupportedComponentTypeException, ExpressionCalculationException {
         //given
         ExpressionCalculator expressionCalculatorMock = Mockito.mock(ExpressionCalculator.class);
         Mockito.when(expressionCalculatorMock.calculate(FIRST_EXPRESSION, EXPRESSION_VARIABLES_VALUES)).thenReturn(ANSWER_TO_FIRST_EXPRESSION);
